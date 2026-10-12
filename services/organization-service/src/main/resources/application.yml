@@ -27,3 +27,7 @@ management:
     web:
       exposure:
         include: health,info
+
+app:
+  logging:
+    http-bodies-enabled: true

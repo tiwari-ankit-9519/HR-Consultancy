@@ -11,14 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hrconsultancy.organization.dto.CreateOrganizationRequestDto;
 import com.hrconsultancy.organization.dto.OrganizationResponse;
+import com.hrconsultancy.organization.dto.UpdateOrganizationRequestDto;
 import com.hrconsultancy.organization.service.OrganizationService;
+import com.hrconsultancy.organization.audit.OrganizationAuditResponse;
+import com.hrconsultancy.organization.audit.OrganizationAuditService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -27,10 +32,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class OrganizationController {
     private static final Logger logger = LogManager.getLogger(OrganizationController.class);
     private final OrganizationService organizationService;
+    private final OrganizationAuditService organizationAuditService;
 
     public OrganizationController(
-            OrganizationService organizationService) {
+            OrganizationService organizationService,
+            OrganizationAuditService organizationAuditService) {
+
         this.organizationService = organizationService;
+        this.organizationAuditService = organizationAuditService;
     }
 
     @PostMapping
@@ -57,4 +66,30 @@ public class OrganizationController {
         return ResponseEntity.ok(organization);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<OrganizationResponse> updateOrganization(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateOrganizationRequestDto request) {
+        logger.info("Received update organization request for organizationId={}", id);
+        OrganizationResponse response = organizationService.updateOrganization(id, request);
+        logger.info("Update organization request handled successfully for organizationId={}", id);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deactivateOrganization(
+            @PathVariable UUID id) {
+        logger.info("Received organization deactivation request for organizationId={}", id);
+        organizationService.deactivateOrganizationById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/audit-logs")
+    public ResponseEntity<List<OrganizationAuditResponse>> getAuditHistory(
+            @PathVariable UUID id) {
+        logger.info("Received organization audit history request for organizationId={}", id);
+        organizationService.getOrganizationById(id);
+        List<OrganizationAuditResponse> auditHistory = organizationAuditService.getAuditHistory(id);
+        return ResponseEntity.ok(auditHistory);
+    }
 }

@@ -25,7 +25,7 @@ public class Organization {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Column(name = "legal_name", length = 200)
+    @Column(name = "legal_name", length = 250)
     private String legalName;
 
     @Column(length = 15)
