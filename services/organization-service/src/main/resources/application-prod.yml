@@ -1,0 +1,41 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: organization-service
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    schemas: organization
+    default-schema: organization
+    create-schemas: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          audiences:
+            - ${JWT_AUDIENCE}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  logging:
+    http-bodies-enabled: ${HTTP_BODY_LOGGING_ENABLED:false}

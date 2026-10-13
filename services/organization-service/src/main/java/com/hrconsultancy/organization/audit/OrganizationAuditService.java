@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+
+
 import com.hrconsultancy.organization.entity.Organization;
 
 @Service
@@ -44,7 +49,7 @@ public class OrganizationAuditService {
     public void record(UUID organizationId, String action, Map<String, Object> oldValues,
             Map<String, Object> newValues) {
         String requestId = ThreadContext.get("requestId");
-        OrganizationAudit audit = new OrganizationAudit(organizationId, action, oldValues, newValues, null, requestId);
+        OrganizationAudit audit = new OrganizationAudit(organizationId, action, oldValues, newValues, getCurrentUsername(), requestId);
         organizationAuditRepository.save(audit);
         logger.info("Organization audit recorded organizationId={} action={}", organizationId, action);
     }
@@ -54,5 +59,20 @@ public class OrganizationAuditService {
         logger.info("Fetching organization audit history for organizationId={}", organizationId);
         return organizationAuditRepository.findByOrganizationIdOrderByChangedAtDesc(organizationId).stream()
                 .map(OrganizationAuditResponse::fromEntity).collect(Collectors.toList());
+    }
+
+    private String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+            String username = jwtAuthenticationToken.getToken().getClaimAsString("preferred_username");
+            if(username != null && !username.isBlank()) {
+                return username;
+            }
+
+            return jwtAuthenticationToken.getToken().getSubject();
+        }
+
+        return  null;
     }
 }

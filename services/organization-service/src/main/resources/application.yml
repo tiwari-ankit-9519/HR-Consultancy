@@ -11,6 +11,13 @@ spring:
     password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          audiences:
+            - ${JWT_AUDIENCE}
   jpa:
     hibernate:
       ddl-auto: validate
