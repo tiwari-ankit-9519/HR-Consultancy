@@ -1,0 +1,30 @@
+server:
+  port: ${SERVER_PORT:8088}
+
+spring:
+  application:
+    name: user-management-service
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          audiences:
+            - ${JWT_AUDIENCE}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  keycloak:
+    base-url: ${KEYCLOAK_BASE_URL}
+    realm: ${KEYCLOAK_REALM:hr-platform}
+    client-id: ${KEYCLOAK_SERVICE_CLIENT_ID}
+    client-secret: ${KEYCLOAK_SERVICE_CLIENT_SECRET}
+
+  logging:
+    http-bodies-enabled: false
