@@ -2,8 +2,8 @@
 <Configuration status="WARN">
 
     <Properties>
-        <Property name="SERVICE_NAME">organization-service</Property>
-        <Property name="LOG_DIR">${env:LOG_PATH:-logs/organization-service}</Property>
+        <Property name="SERVICE_NAME">users-service</Property>
+        <Property name="LOG_DIR">${env:LOG_PATH:-logs/users-service}</Property>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSSXXX} %-5level [%t] [service=${SERVICE_NAME}] [requestId=%X{requestId}] [method=%X{httpMethod}] [path=%X{requestPath}] %logger{36} - %msg%n%throwable</Property>
     </Properties>
 
@@ -15,8 +15,8 @@
 
         <RollingFile
                 name="RollingFile"
-                fileName="${LOG_DIR}/organization-service.log"
-                filePattern="${LOG_DIR}/organization-service-%d{yyyy-MM-dd}-%i.log.gz">
+                fileName="${LOG_DIR}/users-service.log"
+                filePattern="${LOG_DIR}/users-service-%d{yyyy-MM-dd}-%i.log.gz">
 
             <PatternLayout pattern="${LOG_PATTERN}"/>
 
@@ -33,7 +33,7 @@
     <Loggers>
 
         <Logger
-                name="com.hrconsultancy.organization"
+                name="com.hrconsultancy.users"
                 level="INFO"
                 additivity="false">
             <AppenderRef ref="Console"/>

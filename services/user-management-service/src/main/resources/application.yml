@@ -5,6 +5,29 @@ spring:
   application:
     name: user-management-service
 
+  # PostgreSQL database configuration
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  # JPA and Hibernate
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: user_management
+
+  # Database migration management
+  flyway:
+    enabled: true
+    schemas: user_management
+    default-schema: user_management
+    locations: classpath:db/migration
+
+  # JWT validation using Keycloak
   security:
     oauth2:
       resourceserver:
@@ -13,12 +36,14 @@ spring:
           audiences:
             - ${JWT_AUDIENCE}
 
+# Health and application information endpoints
 management:
   endpoints:
     web:
       exposure:
         include: health,info
 
+# Application-specific configuration
 app:
   keycloak:
     base-url: ${KEYCLOAK_BASE_URL}
@@ -27,4 +52,4 @@ app:
     client-secret: ${KEYCLOAK_SERVICE_CLIENT_SECRET}
 
   logging:
-    http-bodies-enabled: false
+    http-bodies-enabled: true

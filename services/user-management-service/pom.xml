@@ -5,6 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Inherit shared versions and configuration from the root project -->
     <parent>
         <groupId>com.hrconsultancy</groupId>
         <artifactId>hr-consultancy-platform</artifactId>
@@ -14,10 +15,11 @@
 
     <artifactId>user-management-service</artifactId>
     <name>user-management-service</name>
+    <packaging>jar</packaging>
 
     <dependencies>
 
-        <!-- REST APIs: exclude default Logback-based logging -->
+        <!-- REST APIs; use Log4j2 instead of default Logback logging -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -65,6 +67,43 @@
             </exclusions>
         </dependency>
 
+        <!-- JPA and Hibernate for persistent audit records -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- PostgreSQL JDBC driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Flyway database migrations -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- PostgreSQL-specific Flyway support -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
         <!-- Log4j2: application logging implementation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,7 +116,7 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Testing -->
+        <!-- Unit tests and Spring integration tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -90,9 +129,16 @@
             </exclusions>
         </dependency>
 
+        <!-- Spring Security test support -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -100,10 +146,13 @@
 
     <build>
         <plugins>
+
+            <!-- Build and run this service as a Spring Boot application -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
 
